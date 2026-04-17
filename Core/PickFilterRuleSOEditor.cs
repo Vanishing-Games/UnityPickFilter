@@ -1,3 +1,15 @@
+#if !UNITY_PICK_FILTER_NO_ODIN
+using Sirenix.OdinInspector.Editor;
+using UnityEditor;
+
+namespace UnityPickFilter
+{
+    [CustomEditor(typeof(PickFilterRuleSO))]
+    public class PickFilterRuleSOEditor : OdinEditor { }
+}
+
+#else
+
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -56,7 +68,6 @@ namespace UnityPickFilter
             float w = rect.width;
             float y = rect.y + 2f;
 
-            // Row 0: RuleName | Action | Scope
             float nameW = w * 0.38f;
             float actionW = w * 0.3f;
             float scopeW = w - nameW - actionW - 8f;
@@ -98,3 +109,5 @@ namespace UnityPickFilter
         }
     }
 }
+
+#endif
