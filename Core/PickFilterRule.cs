@@ -21,6 +21,12 @@ namespace UnityPickFilter
         Tree,
     }
 
+    public enum RuleCombineMode
+    {
+        Override,    // 覆盖：如果匹配，则强制应用此规则，不管之前是否有匹配
+        FollowFirst, // 沿用：如果之前已经有规则匹配了该物体，则跳过此规则
+    }
+
     [Serializable]
     public class PickFilterRule
     {
@@ -38,6 +44,11 @@ namespace UnityPickFilter
         [HorizontalGroup("Header"), LabelWidth(42)]
 #endif
         public PickScope Scope = PickScope.SingleObject;
+
+#if !UNITY_PICK_FILTER_NO_ODIN
+        [HorizontalGroup("Header"), LabelWidth(90)]
+#endif
+        public RuleCombineMode CombineMode = RuleCombineMode.Override;
 
 #if !UNITY_PICK_FILTER_NO_ODIN
         [HorizontalGroup("NameRow", 0.05f), HideLabel]
@@ -147,25 +158,36 @@ namespace UnityPickFilter
             return true;
         }
 
+        private static Dictionary<string, Type> s_TypeCache;
+
         private static Type ResolveType(string typeName)
         {
             if (string.IsNullOrEmpty(typeName))
                 return null;
 
-            var t = Type.GetType(typeName);
-            if (t != null) return t;
-
-            t = Type.GetType($"UnityEngine.{typeName}, UnityEngine");
-            if (t != null) return t;
-
-            t = Type.GetType($"UnityEngine.{typeName}, UnityEngine.CoreModule");
-            if (t != null) return t;
-
-            foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+            if (s_TypeCache == null)
             {
-                t = asm.GetType(typeName);
-                if (t != null) return t;
+                s_TypeCache = new Dictionary<string, Type>(StringComparer.Ordinal);
+                foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+                {
+                    try
+                    {
+                        foreach (var type in asm.GetTypes())
+                        {
+                            if (typeof(Component).IsAssignableFrom(type))
+                            {
+                                // Store by short name and full name
+                                s_TypeCache[type.Name] = type;
+                                s_TypeCache[type.FullName] = type;
+                            }
+                        }
+                    }
+                    catch { /* Some assemblies might not be accessible */ }
+                }
             }
+
+            if (s_TypeCache.TryGetValue(typeName, out var t))
+                return t;
 
             return null;
         }
@@ -178,14 +200,11 @@ namespace UnityPickFilter
             if (s_ComponentTypeNames != null)
                 return s_ComponentTypeNames;
 
-            s_ComponentTypeNames = AppDomain.CurrentDomain
-                .GetAssemblies()
-                .SelectMany(a =>
-                {
-                    try { return a.GetTypes(); }
-                    catch { return Array.Empty<Type>(); }
-                })
-                .Where(t => typeof(Component).IsAssignableFrom(t) && !t.IsAbstract && !t.IsGenericType)
+            // Ensure cache is populated
+            ResolveType("Component");
+
+            s_ComponentTypeNames = s_TypeCache.Values
+                .Where(t => !t.IsAbstract && !t.IsGenericType)
                 .Select(t => t.Name)
                 .Distinct()
                 .OrderBy(n => n)

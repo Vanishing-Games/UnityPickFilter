@@ -5,12 +5,20 @@ using UnityEngine;
 
 namespace UnityPickFilter
 {
+    public enum PickFilterConflictPolicy
+    {
+        FirstMatchWins,
+        LastMatchWins,
+    }
+
     [CreateAssetMenu(menuName = "UnityPickFilter/Settings", fileName = "PickFilterSettings")]
     public class PickFilterSettings : ScriptableObject
     {
         private const string k_DefaultPath = "Assets/Settings/PickFilter/PickFilterSettings.asset";
 
         public bool AutoApply = true;
+        public PickFilterConflictPolicy ConflictPolicy = PickFilterConflictPolicy.FirstMatchWins;
+        public bool OnlyApplyToLeaves = true;
         public List<PickFilterRuleSO> RuleSets = new List<PickFilterRuleSO>();
 
         private static PickFilterSettings s_Instance;

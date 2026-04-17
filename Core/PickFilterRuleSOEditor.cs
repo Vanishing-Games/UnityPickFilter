@@ -44,6 +44,7 @@ namespace UnityPickFilter
                 elem.FindPropertyRelative("RuleName").stringValue = "New Rule";
                 elem.FindPropertyRelative("Action").enumValueIndex = 0;
                 elem.FindPropertyRelative("Scope").enumValueIndex = 0;
+                elem.FindPropertyRelative("CombineMode").enumValueIndex = 0;
                 serializedObject.ApplyModifiedProperties();
             };
         }
@@ -68,12 +69,14 @@ namespace UnityPickFilter
             float w = rect.width;
             float y = rect.y + 2f;
 
-            float nameW = w * 0.38f;
-            float actionW = w * 0.3f;
-            float scopeW = w - nameW - actionW - 8f;
+            float nameW = w * 0.25f;
+            float actionW = w * 0.22f;
+            float scopeW = w * 0.22f;
+            float combineW = w - nameW - actionW - scopeW - 12f;
             EditorGUI.PropertyField(new Rect(x, y, nameW, lh), rule.FindPropertyRelative("RuleName"), GUIContent.none);
             EditorGUI.PropertyField(new Rect(x + nameW + 4f, y, actionW, lh), rule.FindPropertyRelative("Action"), GUIContent.none);
             EditorGUI.PropertyField(new Rect(x + nameW + actionW + 8f, y, scopeW, lh), rule.FindPropertyRelative("Scope"), GUIContent.none);
+            EditorGUI.PropertyField(new Rect(x + nameW + actionW + scopeW + 12f, y, combineW, lh), rule.FindPropertyRelative("CombineMode"), GUIContent.none);
             y += ls;
 
             DrawCondition(ref y, x, w, lh, ls, rule, "UseNameFilter", "NamePattern", "Name (Regex)");
