@@ -56,32 +56,6 @@ git submodule update --init
 
 ---
 
-## 窗口说明
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  [Auto Apply: ON]                  [Apply Now]   [Reset All]    │
-├─────────────────────────────────────────────────────────────────┤
-│  Rule Sets  （上方 = 高优先级）                                  │
-│  ≡  [✓]  UI过滤规则.asset                          [Select]    │
-│  ≡  [✓]  背景层规则.asset                          [Select]    │
-│  ≡  [ ]  Debug用白名单.asset  (disabled)           [Select]    │
-├─────────────────────────────────────────────────────────────────┤
-│  Add Existing SO: [ _________________ ]                         │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-| 控件 | 说明 |
-|---|---|
-| `≡` 拖拽手柄 | 调整 SO 优先级顺序 |
-| 左侧 `[✓]` | 开启/关闭该 Rule Set SO |
-| `[Select]` | 在 Project 窗口中定位该 SO |
-| **Apply Now** | 立即应用所有规则（忽略 Auto Apply 开关） |
-| **Reset All** | 重置场景内所有物体为可点击状态 |
-| **Add Existing SO** | 将已有的 SO 资产加入列表 |
-
----
-
 ## 规则配置
 
 在 `PickFilterRuleSO` 的 Inspector 中配置规则列表，每条规则包含：
@@ -111,14 +85,6 @@ Layer: UI
 ```
 Action: DisablePick  |  Scope: Tree
 Name (Regex): ^Tilemap
-```
-
-**仅允许点击带有 PlayerController 组件的物体：**
-```
-Action: DisablePick  |  Scope: Tree   ← 先用通配符禁用所有（空条件）
----
-Action: EnablePick   |  Scope: SingleObject
-Has Component: PlayerController
 ```
 
 ---
@@ -152,7 +118,7 @@ Assets/Editor/UnityPickFilter/
     └── PickFilterWindow.cs         # EditorWindow 主窗口
 ```
 
-项目侧配置（不在 submodule 内）：
+项目侧配置：
 
 ```
 Assets/Settings/PickFilter/
@@ -164,4 +130,4 @@ Assets/Settings/PickFilter/
 
 ## 兼容性
 
-- Unity 6000.x (Unity 6 LTS) 及以上
+- 在 `Unity 6000.x (Unity 6 LTS)` 上测试无误
