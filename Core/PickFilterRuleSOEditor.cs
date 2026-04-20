@@ -32,11 +32,19 @@ namespace UnityPickFilter
 
         private void BuildList()
         {
-            m_RulesList = new ReorderableList(serializedObject, m_RulesProp, true, true, true, true);
+            m_RulesList = new ReorderableList(
+                serializedObject,
+                m_RulesProp,
+                true,
+                true,
+                true,
+                true
+            );
             m_RulesList.drawHeaderCallback = rect =>
                 EditorGUI.LabelField(rect, "Rules  (top = evaluated first)");
             m_RulesList.drawElementCallback = DrawRuleElement;
-            m_RulesList.elementHeightCallback = _ => (EditorGUIUtility.singleLineHeight + 2f) * 6f + 6f;
+            m_RulesList.elementHeightCallback = _ =>
+                (EditorGUIUtility.singleLineHeight + 2f) * 6f + 6f;
             m_RulesList.onAddCallback = list =>
             {
                 m_RulesProp.arraySize++;
@@ -73,23 +81,76 @@ namespace UnityPickFilter
             float actionW = w * 0.22f;
             float scopeW = w * 0.22f;
             float combineW = w - nameW - actionW - scopeW - 12f;
-            EditorGUI.PropertyField(new Rect(x, y, nameW, lh), rule.FindPropertyRelative("RuleName"), GUIContent.none);
-            EditorGUI.PropertyField(new Rect(x + nameW + 4f, y, actionW, lh), rule.FindPropertyRelative("Action"), GUIContent.none);
-            EditorGUI.PropertyField(new Rect(x + nameW + actionW + 8f, y, scopeW, lh), rule.FindPropertyRelative("Scope"), GUIContent.none);
-            EditorGUI.PropertyField(new Rect(x + nameW + actionW + scopeW + 12f, y, combineW, lh), rule.FindPropertyRelative("CombineMode"), GUIContent.none);
+            EditorGUI.PropertyField(
+                new Rect(x, y, nameW, lh),
+                rule.FindPropertyRelative("RuleName"),
+                GUIContent.none
+            );
+            EditorGUI.PropertyField(
+                new Rect(x + nameW + 4f, y, actionW, lh),
+                rule.FindPropertyRelative("Action"),
+                GUIContent.none
+            );
+            EditorGUI.PropertyField(
+                new Rect(x + nameW + actionW + 8f, y, scopeW, lh),
+                rule.FindPropertyRelative("Scope"),
+                GUIContent.none
+            );
+            EditorGUI.PropertyField(
+                new Rect(x + nameW + actionW + scopeW + 12f, y, combineW, lh),
+                rule.FindPropertyRelative("CombineMode"),
+                GUIContent.none
+            );
             y += ls;
 
-            DrawCondition(ref y, x, w, lh, ls, rule, "UseNameFilter", "NamePattern", "Name (Regex)");
+            DrawCondition(
+                ref y,
+                x,
+                w,
+                lh,
+                ls,
+                rule,
+                "UseNameFilter",
+                "NamePattern",
+                "Name (Regex)"
+            );
             DrawCondition(ref y, x, w, lh, ls, rule, "UseTagFilter", "Tag", "Tag");
             DrawCondition(ref y, x, w, lh, ls, rule, "UseLayerFilter", "Layer", "Layer");
-            DrawCondition(ref y, x, w, lh, ls, rule, "UseHasComponent", "HasComponentType", "Has Component");
-            DrawCondition(ref y, x, w, lh, ls, rule, "UseNotHasComponent", "NotHasComponentType", "Not Has Component");
+            DrawCondition(
+                ref y,
+                x,
+                w,
+                lh,
+                ls,
+                rule,
+                "UseHasComponent",
+                "HasComponentType",
+                "Has Component"
+            );
+            DrawCondition(
+                ref y,
+                x,
+                w,
+                lh,
+                ls,
+                rule,
+                "UseNotHasComponent",
+                "NotHasComponentType",
+                "Not Has Component"
+            );
         }
 
         private static void DrawCondition(
-            ref float y, float x, float w, float lh, float ls,
+            ref float y,
+            float x,
+            float w,
+            float lh,
+            float ls,
             SerializedProperty rule,
-            string toggleField, string valueField, string label)
+            string toggleField,
+            string valueField,
+            string label
+        )
         {
             float toggleW = 18f;
             float labelW = w * 0.3f;
@@ -105,7 +166,8 @@ namespace UnityPickFilter
                 EditorGUI.PropertyField(
                     new Rect(valueX, y, valueW, lh),
                     rule.FindPropertyRelative(valueField),
-                    GUIContent.none);
+                    GUIContent.none
+                );
             }
 
             y += ls;

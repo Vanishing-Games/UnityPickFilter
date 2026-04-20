@@ -21,7 +21,10 @@ namespace UnityPickFilter
             EditorApplication.delayCall += ApplyAllRules;
         }
 
-        private static void OnSceneOpened(UnityEngine.SceneManagement.Scene scene, OpenSceneMode mode)
+        private static void OnSceneOpened(
+            UnityEngine.SceneManagement.Scene scene,
+            OpenSceneMode mode
+        )
         {
             ApplyAllRules();
         }
@@ -76,8 +79,16 @@ namespace UnityPickFilter
 
             ResetAllPicking();
 
-            var decisionsSelf = new Dictionary<GameObject, (PickAction action, string soName, string ruleName, int priority)>();
-            var decisionsTree = new Dictionary<GameObject, (PickAction action, string soName, string ruleName, int priority)>();
+            var decisionsSelf =
+                new Dictionary<
+                    GameObject,
+                    (PickAction action, string soName, string ruleName, int priority)
+                >();
+            var decisionsTree =
+                new Dictionary<
+                    GameObject,
+                    (PickAction action, string soName, string ruleName, int priority)
+                >();
 
             int priorityCounter = 0;
             foreach (var so in settings.RuleSets)
@@ -90,8 +101,9 @@ namespace UnityPickFilter
                     int currentPriority = priorityCounter++;
                     foreach (var go in FindAllMatchingObjects(rule))
                     {
-                        var targetDict = rule.Scope == PickScope.SingleObject ? decisionsSelf : decisionsTree;
-                        
+                        var targetDict =
+                            rule.Scope == PickScope.SingleObject ? decisionsSelf : decisionsTree;
+
                         bool shouldUpdate = false;
                         if (!targetDict.ContainsKey(go))
                         {
@@ -101,7 +113,7 @@ namespace UnityPickFilter
                         {
                             // 使用规则自带的结合模式
                             if (rule.CombineMode == RuleCombineMode.Override)
-                                shouldUpdate = true; 
+                                shouldUpdate = true;
                         }
 
                         if (shouldUpdate)
@@ -123,17 +135,24 @@ namespace UnityPickFilter
         }
 
         private static void ApplyToLeavesOnly(
-            Dictionary<GameObject, (PickAction action, string soName, string ruleName, int priority)> decisionsSelf,
-            Dictionary<GameObject, (PickAction action, string soName, string ruleName, int priority)> decisionsTree)
+            Dictionary<
+                GameObject,
+                (PickAction action, string soName, string ruleName, int priority)
+            > decisionsSelf,
+            Dictionary<
+                GameObject,
+                (PickAction action, string soName, string ruleName, int priority)
+            > decisionsTree
+        )
         {
             var allPickables = GetAllPickableObjects();
             foreach (var go in allPickables)
             {
                 PickAction finalAction = PickAction.EnablePick;
-                
+
                 // 1. Check self decision (priority)
                 // 2. Check tree decisions in ancestry (nearest wins)
-                
+
                 if (decisionsSelf.TryGetValue(go, out var selfDec))
                 {
                     finalAction = selfDec.action;
@@ -148,7 +167,8 @@ namespace UnityPickFilter
                             finalAction = treeDec.action;
                             break;
                         }
-                        curr = curr.transform.parent != null ? curr.transform.parent.gameObject : null;
+                        curr =
+                            curr.transform.parent != null ? curr.transform.parent.gameObject : null;
                     }
                 }
 
@@ -160,12 +180,20 @@ namespace UnityPickFilter
         }
 
         private static void ApplyLegacy(
-            Dictionary<GameObject, (PickAction action, string soName, string ruleName, int priority)> decisionsSelf,
-            Dictionary<GameObject, (PickAction action, string soName, string ruleName, int priority)> decisionsTree)
+            Dictionary<
+                GameObject,
+                (PickAction action, string soName, string ruleName, int priority)
+            > decisionsSelf,
+            Dictionary<
+                GameObject,
+                (PickAction action, string soName, string ruleName, int priority)
+            > decisionsTree
+        )
         {
             // In legacy mode, we just apply everything as they come.
             // To respect priority, we should sort all decisions.
-            var all = new List<(GameObject go, PickAction action, bool includeChildren, int priority)>();
+            var all =
+                new List<(GameObject go, PickAction action, bool includeChildren, int priority)>();
             foreach (var kvp in decisionsSelf)
                 all.Add((kvp.Key, kvp.Value.action, false, kvp.Value.priority));
             foreach (var kvp in decisionsTree)
@@ -188,7 +216,8 @@ namespace UnityPickFilter
             for (int i = 0; i < SceneManager.sceneCount; i++)
             {
                 var scene = SceneManager.GetSceneAt(i);
-                if (!scene.isLoaded) continue;
+                if (!scene.isLoaded)
+                    continue;
                 foreach (var root in scene.GetRootGameObjects())
                     CollectPickables(root, result);
             }
@@ -206,9 +235,9 @@ namespace UnityPickFilter
 
         private static bool IsPotentiallyPickable(GameObject go)
         {
-            return go.GetComponent<Renderer>() != null || 
-                   go.GetComponent<Collider>() != null || 
-                   go.GetComponent<Collider2D>() != null;
+            return go.GetComponent<Renderer>() != null
+                || go.GetComponent<Collider>() != null
+                || go.GetComponent<Collider2D>() != null;
         }
 
         private static List<GameObject> FindAllMatchingObjects(PickFilterRule rule)
@@ -225,7 +254,11 @@ namespace UnityPickFilter
             return result;
         }
 
-        private static void CollectAllMatching(GameObject go, PickFilterRule rule, List<GameObject> result)
+        private static void CollectAllMatching(
+            GameObject go,
+            PickFilterRule rule,
+            List<GameObject> result
+        )
         {
             if (rule.Matches(go))
             {
@@ -243,7 +276,8 @@ namespace UnityPickFilter
             string[] importedAssets,
             string[] deletedAssets,
             string[] movedAssets,
-            string[] movedFromAssetPaths)
+            string[] movedFromAssetPaths
+        )
         {
             foreach (var path in importedAssets)
             {

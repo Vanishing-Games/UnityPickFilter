@@ -88,7 +88,11 @@ namespace UnityPickFilter
 
             // SO object field
             EditorGUI.BeginChangeCheck();
-            EditorGUI.PropertyField(new Rect(x + toggleW + gap, y, fieldW, lh), elem, GUIContent.none);
+            EditorGUI.PropertyField(
+                new Rect(x + toggleW + gap, y, fieldW, lh),
+                elem,
+                GUIContent.none
+            );
             if (EditorGUI.EndChangeCheck())
             {
                 m_SerializedSettings.ApplyModifiedProperties();
@@ -99,7 +103,9 @@ namespace UnityPickFilter
             // Select button
             if (ruleSetSO != null)
             {
-                if (GUI.Button(new Rect(x + toggleW + gap + fieldW + gap, y, selectW, lh), "Select"))
+                if (
+                    GUI.Button(new Rect(x + toggleW + gap + fieldW + gap, y, selectW, lh), "Select")
+                )
                     Selection.activeObject = ruleSetSO;
             }
         }
@@ -115,7 +121,8 @@ namespace UnityPickFilter
                 "NewRuleSet",
                 "asset",
                 "Choose where to save the new Rule Set",
-                defaultDir);
+                defaultDir
+            );
 
             if (string.IsNullOrEmpty(path))
                 return;
@@ -157,7 +164,8 @@ namespace UnityPickFilter
             bool autoApply = EditorGUILayout.ToggleLeft(
                 "Auto Apply",
                 m_Settings.AutoApply,
-                GUILayout.Width(88f));
+                GUILayout.Width(88f)
+            );
             if (EditorGUI.EndChangeCheck())
             {
                 Undo.RecordObject(m_Settings, "Toggle Auto Apply");
@@ -194,7 +202,9 @@ namespace UnityPickFilter
         {
             EditorGUILayout.BeginHorizontal();
             GUILayout.Label("Add Existing SO:", GUILayout.Width(106f));
-            var dragged = EditorGUILayout.ObjectField(null, typeof(PickFilterRuleSO), false) as PickFilterRuleSO;
+            var dragged =
+                EditorGUILayout.ObjectField(null, typeof(PickFilterRuleSO), false)
+                as PickFilterRuleSO;
             if (dragged != null && !m_Settings.RuleSets.Contains(dragged))
             {
                 Undo.RecordObject(m_Settings, "Add Rule Set");

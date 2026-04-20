@@ -1,11 +1,12 @@
+using System;
+using System.Text.RegularExpressions;
+using UnityEngine;
 #if !UNITY_PICK_FILTER_NO_ODIN
 using System.Collections.Generic;
 using System.Linq;
 using Sirenix.OdinInspector;
 #endif
-using System;
-using System.Text.RegularExpressions;
-using UnityEngine;
+
 
 namespace UnityPickFilter
 {
@@ -23,7 +24,7 @@ namespace UnityPickFilter
 
     public enum RuleCombineMode
     {
-        Override,    // 覆盖：如果匹配，则强制应用此规则，不管之前是否有匹配
+        Override, // 覆盖：如果匹配，则强制应用此规则，不管之前是否有匹配
         FollowFirst, // 沿用：如果之前已经有规则匹配了该物体，则跳过此规则
     }
 
@@ -56,7 +57,12 @@ namespace UnityPickFilter
         public bool UseNameFilter;
 
 #if !UNITY_PICK_FILTER_NO_ODIN
-        [HorizontalGroup("NameRow"), EnableIf("UseNameFilter"), LabelText("Name (Regex)"), LabelWidth(96)]
+        [
+            HorizontalGroup("NameRow"),
+            EnableIf("UseNameFilter"),
+            LabelText("Name (Regex)"),
+            LabelWidth(96)
+        ]
 #endif
         public string NamePattern = "";
 
@@ -76,7 +82,12 @@ namespace UnityPickFilter
         public bool UseLayerFilter;
 
 #if !UNITY_PICK_FILTER_NO_ODIN
-        [HorizontalGroup("LayerRow"), EnableIf("UseLayerFilter"), LabelText("Layer"), LabelWidth(96)]
+        [
+            HorizontalGroup("LayerRow"),
+            EnableIf("UseLayerFilter"),
+            LabelText("Layer"),
+            LabelWidth(96)
+        ]
 #endif
         public LayerMask Layer;
 
@@ -86,7 +97,12 @@ namespace UnityPickFilter
         public bool UseHasComponent;
 
 #if !UNITY_PICK_FILTER_NO_ODIN
-        [HorizontalGroup("HasCompRow"), EnableIf("UseHasComponent"), LabelText("Has Component"), LabelWidth(96)]
+        [
+            HorizontalGroup("HasCompRow"),
+            EnableIf("UseHasComponent"),
+            LabelText("Has Component"),
+            LabelWidth(96)
+        ]
         [ValueDropdown("GetComponentTypeNames")]
 #endif
         public string HasComponentType = "";
@@ -97,15 +113,24 @@ namespace UnityPickFilter
         public bool UseNotHasComponent;
 
 #if !UNITY_PICK_FILTER_NO_ODIN
-        [HorizontalGroup("NotHasCompRow"), EnableIf("UseNotHasComponent"), LabelText("Not Has Component"), LabelWidth(96)]
+        [
+            HorizontalGroup("NotHasCompRow"),
+            EnableIf("UseNotHasComponent"),
+            LabelText("Not Has Component"),
+            LabelWidth(96)
+        ]
         [ValueDropdown("GetComponentTypeNames")]
 #endif
         public string NotHasComponentType = "";
 
         public bool Matches(GameObject go)
         {
-            bool anyEnabled = UseNameFilter || UseTagFilter || UseLayerFilter
-                              || UseHasComponent || UseNotHasComponent;
+            bool anyEnabled =
+                UseNameFilter
+                || UseTagFilter
+                || UseLayerFilter
+                || UseHasComponent
+                || UseNotHasComponent;
             if (!anyEnabled)
                 return true;
 
@@ -182,7 +207,9 @@ namespace UnityPickFilter
                             }
                         }
                     }
-                    catch { /* Some assemblies might not be accessible */ }
+                    catch
+                    { /* Some assemblies might not be accessible */
+                    }
                 }
             }
 
@@ -203,8 +230,8 @@ namespace UnityPickFilter
             // Ensure cache is populated
             ResolveType("Component");
 
-            s_ComponentTypeNames = s_TypeCache.Values
-                .Where(t => !t.IsAbstract && !t.IsGenericType)
+            s_ComponentTypeNames = s_TypeCache
+                .Values.Where(t => !t.IsAbstract && !t.IsGenericType)
                 .Select(t => t.Name)
                 .Distinct()
                 .OrderBy(n => n)
